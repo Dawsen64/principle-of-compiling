@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+
+#include "func_lex.h"
+/*********全局变量************/
+
+int state; //整型变量，当前状态指示。
+char C; //字符变量，存放当前读入的字符。
+char token[MAXLEN_LETTER];// 字符数组，存放当前正在识别的单词字符串。
+char buffer[MAX_BUFFER]; // 字符数组，输入缓冲区。2KB大小
+int forward;// 字符指针，向前指针。
+int lexemebegin; // 字符指针，指向buffer中当前单词的开始位置。
+int iskey; // 整型变量，值为 - 1，表示识别出的单词是用户自定义标识符，否则，表示识别出的单词是关键字，其值为关键字的记号。
+SqStack stack; //用来处理“{([ ”的栈
+char Id_Table[ID_TABLE_SIZE][MAXLEN_LETTER];//存放id符号表
+int id_length;
+void Init()//初始化全局变量
+{
+    //初始化buffer
+    buffer[MAX_BUFFER/2 - 1] = EOF;
+    buffer[MAX_BUFFER - 1] = EOF;
+
+    forward = 0;
+    id_length = 0;
+    stack.data[0] = '\0';
+    stack.top = 0;
+
+}

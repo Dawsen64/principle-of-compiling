@@ -80,8 +80,13 @@ char* Lex_analysis()
                 break;               //返回‘）’的记号
             case ';':
                 state = 12; 
-                break;               //返回‘；’的记号
-            default: state = 13; break;      //设置错误状态
+                break;    //返回‘;’的记号
+            case ',': case '.': case '?':
+                state = 13;
+                break;
+            default: 
+                state = 14; 
+                break;      //设置错误状态
             };
             break;
         case 1:      // 标识符状态
@@ -188,11 +193,48 @@ char* Lex_analysis()
             break;
         case 9: //设置‘/’或注释
             get_char();
-            if (C == '/')
+            if (C == '/')//跳过一行注释
             {
-
+                get_char();
+                while (C != '\n')
+                {
+                    get_char();
+                }
+                state = 0;
             }
+            else if (C == '*') //跳过多行注释'/*...*/'
+            {
+                get_char();
+                while (state != 0)
+                {
+                    if (C == '*')
+                    {
+                        get_char();
+                        if (C == '/')
+                        {
+                            state = 0;
+                            break;
+                        }
+
+                        retract();
+                    }
+                    get_char();
+                }
+            }
+            else printf("</, ->\n");
             break;
+        case 10://设置（
+            printf("<(, ->\n");
+        case 11://设置)
+            printf("<), ->\n");
+        case 12: //设置 ;
+            printf("<;, ->\n");
+        case 13: //设置标点符号状态 , . ? 
+            printf("<%c, ->\n", C);
+
+
+
+
         }
     }
 }
