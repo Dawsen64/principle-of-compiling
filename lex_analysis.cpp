@@ -147,6 +147,52 @@ char* Lex_analysis()
                 printf("<relop, GT>\n");
             }
             break;
+        case 5: //设置‘=’状态
+            get_char();
+            if (C == '=')
+                printf("<relop, ==>\n");
+            else
+            {
+                retract();
+                state = 0;
+
+                printf("<relop, EQ>\n");
+            }
+            break;
+        case 6: //设置‘+’
+            get_char();
+            if (C == '+')
+                printf("<++, ->\n");
+            else
+            {
+                retract();
+                state = 0;
+
+                printf("<+, ->\n");
+            }
+            break;
+        case 7: //设置‘-’
+            get_char();
+            if (C == '-')
+                printf("<--, ->\n");
+            else
+            {
+                retract();
+                state = 0;
+
+                printf("<-, ->\n");
+            }
+            break;
+        case 8: //设置‘*’
+            printf("<*, ->\n");
+            break;
+        case 9: //设置‘/’或注释
+            get_char();
+            if (C == '/')
+            {
+
+            }
+            break;
         }
     }
 }
