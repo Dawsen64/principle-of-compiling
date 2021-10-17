@@ -1,14 +1,26 @@
 #ifndef _FUNC_LEX_H_
 #define _FUNC_LEX_H_
 
-#define MAXLEN_LETTER 32
+#define MAXLEN_LETTER 256
 #define MAX_BUFFER 2048 //2KB
+#define STACK_SIZE 100
+#define STOP -1
+#define ERROR -1
+#define ID_TABLE_SIZE 1000
+typedef struct sta //ÓÃÀ´´¦Àí{£¨¡¾ µÄÕ»
+{
+	char data[STACK_SIZE];
+	int top;
+}SqStack;
+
+
 
 void get_nbc(); // ¹ı³Ì£¬¼ì²éCÖĞµÄ×Ö·ûÊÇ·ñÎª¿Õ¸ñ£¬ÈôÊÇ£¬Ôò·´¸´µ÷ÓÃ¹ı³Ìget_char£¬Ö±µ½CÖĞ½øÈëÒ»¸ö·Ç¿Õ×Ö·ûÎªÖ¹¡£
 void get_char(); // ¹ı³Ì£¬Ã¿µ÷ÓÃÒ»´Î£¬¸ù¾İforwardµÄÖ¸Ê¾´ÓbufferÖĞ¶ÁÒ»¸ö×Ö·û£¬²¢°ÑËü·ÅÈë±äÁ¿CÖĞ£¬È»ºó£¬ÒÆ¶¯forward£¬Ê¹Ö®Ö¸ÏòÏÂÒ»¸ö×Ö·û¡£
 void cat(); // ¹ı³Ì£¬°ÑCÖĞµÄ×Ö·ûÁ¬½ÓÔÚtokenÖĞµÄ×Ö·û´®ºóÃæ¡£
 bool letter();// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎª×ÖÄ¸£¬ ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse¡£
 bool digit();// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎªÊı×Ö£¬ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse¡£
+bool is_digit();//ÅĞ¶ÏtokenÀïµÄÊÇ·ñÊÇÊµÊı
 void retract();// ¹ı³Ì£¬ÏòÇ°Ö¸ÕëforwardºóÍËÒ»¸ö×Ö·û¡£
 int reserve();// º¯Êı£¬¸ù¾İtokenÖĞµÄµ¥´Ê²é¹Ø¼ü×Ö±í£¬ÈôtokenÖĞµÄµ¥´ÊÊÇ¹Ø¼ü×Ö£¬Ôò·µ»ØÖµ¸Ã¹Ø¼ü×ÖµÄ¼ÇºÅ£¬·ñÔò£¬·µ»ØÖµ¡° - 1¡±¡£
 int SToI();// ¹ı³Ì£¬½«tokenÖĞµÄ×Ö·û´®×ª»»³ÉÕûÊı¡£
@@ -18,6 +30,6 @@ int table_insert();// º¯Êı£¬½«Ê¶±ğ³öÀ´µÄ±êÊ¶·û£¨¼´tokenÖĞµÄµ¥´Ê£©²åÈë·ûºÅ±í£¬·µ»
 // error;// ¹ı³Ì£¬¶Ô·¢ÏÖµÄ´íÎó½øĞĞÏàÓ¦µÄ´¦Àí¡£
 //return;// ¹ı³Ì£¬½«Ê¶±ğ³öÀ´µÄµ¥´ÊµÄ¼ÇºÅ·µ»Ø¸øµ÷ÓÃ³ÌĞò¡£
 char* Lex_analysis(); //´Ê·¨·ÖÎö³ÌĞò
-
-
+void Init();//³õÊ¼»¯È«¾Ö±äÁ¿µÄº¯Êı
+void ReadtoBuffer(char* filename, char* destination, int length);//°Ñ´ı·ÖÎöµÄÔ´´úÂë¶ÁÈë»º³åÇø
 #endif
