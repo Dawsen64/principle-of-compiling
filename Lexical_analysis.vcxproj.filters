@@ -15,14 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Lex_main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="func_lex.h">
       <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="lex_analysis.cpp">
+    <ClCompile Include="lex_analysis.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Lex_main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="test5.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>

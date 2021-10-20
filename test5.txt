@@ -1,0 +1,45 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_LEN 2048
+//关键字0-31
+char keywords[32][20] = { "auto","break","case","char","const","continue",
+"default","do","double","else","enum","extern","float","for","goto",
+"if","int","long ","register","return","short","signed","static",
+"sizeof","struct","switch","typedef","unionunsigned","void","volatile","while " };
+//分割符40-79
+char delimiters[40][5] = { "=","+","*","**",";","(",")","{","}","<",
+"?","^","%",",",";","[","]",">","#",".","-","!",
+"<=","<>",">=","==","++","+=","--",
+"-=","*=","/=","//","!=", "||","&&" };
+//标识符表80-109
+char id[30][10] = { "" };
+//整数表110-159
+int digitals[50] = { 0 };
+//小数表160-209
+double my_double[50] = { 0 };
+//记录各类单词数量
+int my_count[300] = { 0 };
+//记录行数
+int line_count = 1;
+//记录单词数量
+int word_count = 0;
+
+int skip_space(char buffer[], int char_count);//跳过空格和制表符
+int judge_first_case0(char x);//判断第一个字符以转到后续状态
+int letter(char x);//判断是否为字符
+int digit(char x);//判断是否为数字
+int my_id(char buffer[]);//判断是否为分割符
+int my_reserve(char buffer[]);//判断是否为保留字
+int my_table_insert(char buffer[]);//返回符号表入口
+int my_digit_insert(char buffer[]);//返回整数表入口
+int my_double_insert(char buffer[]);//返回小数表入口
+
+
+int main() {
+	//打开读取测试用例与结果保存文件
+	FILE* test;
+	char buffer[BUFFER_LEN];
+	test = fopen("test5.txt", "r");

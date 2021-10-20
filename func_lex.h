@@ -1,35 +1,44 @@
 #ifndef _FUNC_LEX_H_
 #define _FUNC_LEX_H_
 
+#include <stdbool.h>
+
 #define MAXLEN_LETTER 256
 #define MAX_BUFFER 2048 //2KB
 #define STACK_SIZE 100
 #define STOP -1
-#define ERROR -1
+#define ERROR -2
 #define ID_TABLE_SIZE 1000
-typedef struct sta //ÓÃÀ´´¦Àí{£¨¡¾ µÄÕ»
+#define FILENAME "input.txt"
+typedef struct counter //ç»Ÿè®¡æºç¨‹åºä¸­çš„å„ç§å­—ç¬¦æ•°é‡
 {
-	char data[STACK_SIZE];
-	int top;
-}SqStack;
+	int lines;//è¡Œæ•°
+	int char_num;//å­—ç¬¦æ€»æ•°
+	int keyword_num;//å…³é”®å­—æ•°é‡
+	int id_num;//æ ‡è¯†ç¬¦æ•°é‡
+	int digit_num;//æ•°å­—æ€»æ•°
+	int dilimiter_num;//åˆ†ç•Œç¬¦æ•°é‡
+	int operator_num;//è¿ç®—ç¬¦æ•°é‡
+}Counter;
 
 
 
-void get_nbc(); // ¹ı³Ì£¬¼ì²éCÖĞµÄ×Ö·ûÊÇ·ñÎª¿Õ¸ñ£¬ÈôÊÇ£¬Ôò·´¸´µ÷ÓÃ¹ı³Ìget_char£¬Ö±µ½CÖĞ½øÈëÒ»¸ö·Ç¿Õ×Ö·ûÎªÖ¹¡£
-void get_char(); // ¹ı³Ì£¬Ã¿µ÷ÓÃÒ»´Î£¬¸ù¾İforwardµÄÖ¸Ê¾´ÓbufferÖĞ¶ÁÒ»¸ö×Ö·û£¬²¢°ÑËü·ÅÈë±äÁ¿CÖĞ£¬È»ºó£¬ÒÆ¶¯forward£¬Ê¹Ö®Ö¸ÏòÏÂÒ»¸ö×Ö·û¡£
-void cat(); // ¹ı³Ì£¬°ÑCÖĞµÄ×Ö·ûÁ¬½ÓÔÚtokenÖĞµÄ×Ö·û´®ºóÃæ¡£
-bool letter();// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎª×ÖÄ¸£¬ ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse¡£
-bool digit();// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎªÊı×Ö£¬ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse¡£
-bool is_digit();//ÅĞ¶ÏtokenÀïµÄÊÇ·ñÊÇÊµÊı
-void retract();// ¹ı³Ì£¬ÏòÇ°Ö¸ÕëforwardºóÍËÒ»¸ö×Ö·û¡£
-int reserve();// º¯Êı£¬¸ù¾İtokenÖĞµÄµ¥´Ê²é¹Ø¼ü×Ö±í£¬ÈôtokenÖĞµÄµ¥´ÊÊÇ¹Ø¼ü×Ö£¬Ôò·µ»ØÖµ¸Ã¹Ø¼ü×ÖµÄ¼ÇºÅ£¬·ñÔò£¬·µ»ØÖµ¡° - 1¡±¡£
-int SToI();// ¹ı³Ì£¬½«tokenÖĞµÄ×Ö·û´®×ª»»³ÉÕûÊı¡£
-int SToF();// ¹ı³Ì£¬½«tokenÖĞµÄ×Ö·û´®×ª»»³É¸¡µãÊı¡£
-int DTB();// ¹ı³Ì£¬Ëü½«tokenÖĞµÄÊı×Ö´®×ª»»³É¶ş½øÖÆµÄÊıÖµ±íÊ¾¡£
-int table_insert();// º¯Êı£¬½«Ê¶±ğ³öÀ´µÄ±êÊ¶·û£¨¼´tokenÖĞµÄµ¥´Ê£©²åÈë·ûºÅ±í£¬·µ»Ø¸Ãµ¥´ÊÔÚ·ûºÅ±íÖĞµÄÎ»ÖÃÖ¸Õë¡£
-// error;// ¹ı³Ì£¬¶Ô·¢ÏÖµÄ´íÎó½øĞĞÏàÓ¦µÄ´¦Àí¡£
-//return;// ¹ı³Ì£¬½«Ê¶±ğ³öÀ´µÄµ¥´ÊµÄ¼ÇºÅ·µ»Ø¸øµ÷ÓÃ³ÌĞò¡£
-char* Lex_analysis(); //´Ê·¨·ÖÎö³ÌĞò
-void Init();//³õÊ¼»¯È«¾Ö±äÁ¿µÄº¯Êı
-void ReadtoBuffer(char* filename, char* destination, int length);//°Ñ´ı·ÖÎöµÄÔ´´úÂë¶ÁÈë»º³åÇø
+void get_nbc(); // æ£€æŸ¥Cä¸­çš„å­—ç¬¦æ˜¯å¦ä¸ºç©ºæ ¼ï¼Œè‹¥æ˜¯ï¼Œåˆ™åå¤è°ƒ    ç”¨è¿‡ç¨‹get_charï¼Œç›´åˆ°Cä¸­è¿›å…¥ä¸€ä¸ªéç©ºå­—ç¬¦ä¸ºæ­¢
+void get_char(); // æ¯è°ƒç”¨ä¸€æ¬¡ï¼Œæ ¹æ®forwardçš„æŒ‡ç¤ºä»bufferä¸­    è¯»ä¸€ä¸ªå­—ç¬¦ï¼Œå¹¶æŠŠå®ƒæ”¾å…¥å˜é‡Cä¸­ï¼Œç„¶åï¼Œç§»åŠ¨forwardï¼Œä½¿ä¹‹    æŒ‡å‘ä¸‹ä¸€ä¸ªå­—ç¬¦
+void cat(); // æŠŠCä¸­çš„å­—ç¬¦è¿æ¥åœ¨tokenä¸­çš„å­—ç¬¦ä¸²åé¢
+bool letter();//åˆ¤æ–­Cä¸­çš„å­—ç¬¦æ˜¯å¦ä¸ºå­—æ¯
+bool digit();// åˆ¤æ–­Cä¸­çš„å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—ï¼Œ
+bool is_digit();//åˆ¤æ–­tokenä¸­çš„æ˜¯å¦ä¸ºæ•°å­—
+void retract();// forwardå›é€€ä¸€ä¸ª
+int reserve();// åˆ¤æ–­æ˜¯å¦ä¸ºä¿ç•™å­—
+int SToI();// 
+int SToF();//
+int DTB();// 
+void table_insert();// 
+// error;// 
+//return;// 
+char* Lex_analysis(); //ï¿½
+void Init();// åˆå§‹åŒ–å…¨å±€å˜é‡
+void ReadtoBuffer(const char* filename, char* destination, int length);// æŠŠæ–‡ä»¶è¯»å…¥ç¼“å†²åŒº
+void Print_num();//è¾“å‡ºå„ç§ç»Ÿè®¡æ•°é‡
 #endif

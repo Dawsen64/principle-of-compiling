@@ -7,7 +7,8 @@
 
 int main()
 {
-
+	Init();
+	Lex_analysis();
 
 	return 0;
 }
