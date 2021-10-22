@@ -5,7 +5,6 @@
 
 #define MAXLEN_LETTER 256
 #define MAX_BUFFER 2048 //2KB
-#define STACK_SIZE 100
 #define STOP -1
 #define ERROR -2
 #define ID_TABLE_SIZE 1000

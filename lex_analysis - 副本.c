@@ -3,28 +3,29 @@
 #include <string.h>
 
 #include "func_lex.h"
-/*********È«¾Ö±äÁ¿************/
+/*********å…¨å±€å˜é‡************/
 
-int state; //ÕûĞÍ±äÁ¿£¬µ±Ç°×´Ì¬Ö¸Ê¾
-char C; //×Ö·û±äÁ¿£¬´æ·Åµ±Ç°¶ÁÈëµÄ×Ö·û¡£
+int state; //æ•´å‹å˜é‡ï¼Œå½“å‰çŠ¶æ€æŒ‡ç¤º
+char C; //å­—ç¬¦å˜é‡ï¼Œå­˜æ”¾å½“å‰è¯»å…¥çš„å­—ç¬¦ã€‚
 
 char keywords[34][20] = { "auto","break","case","char","const","continue",
 "default","do","double","else","enum","extern","float","for","goto",
 "if","int","long ","register","return","short","signed","static",
-"sizeof","struct","switch","typedef","unionunsigned","void","volatile","while"};//¹Ø¼ü×Ö¼ÓÉÏÁËinclude,define
+"sizeof","struct","switch","typedef","unionunsigned","void","volatile","while","include","define"};//å…³é”®å­—åŠ ä¸Šäº†include,define
 
-char token[MAXLEN_LETTER];// ×Ö·ûÊı×é£¬´æ·Åµ±Ç°ÕıÔÚÊ¶±ğµÄµ¥´Ê×Ö·û´®¡£
-short tokenptr = 0;//Ö¸ÏòtokenµÄ¡®\0¡¯×Ö·û
+char token[MAXLEN_LETTER];// å­—ç¬¦æ•°ç»„ï¼Œå­˜æ”¾å½“å‰æ­£åœ¨è¯†åˆ«çš„å•è¯å­—ç¬¦ä¸²ã€‚
+short tokenptr = 0;//æŒ‡å‘tokençš„â€˜\0â€™å­—ç¬¦
 char buffer[MAX_BUFFER]; // 
-int flen = 0;
 int forward;// 
+int lexemebegin; // 
 int iskey; // 
 char Id_Table[ID_TABLE_SIZE][MAXLEN_LETTER];//
 int id_length;
+int flen = 0;
 Counter counter;
 void Init()//
 {
-    //³õÊ¼»¯buffer
+    //åˆå§‹åŒ–buffer
     buffer[MAX_BUFFER/2 - 1] = EOF;
     buffer[MAX_BUFFER - 1] = EOF;
 
@@ -53,11 +54,11 @@ char* Lex_analysis()
             case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K':
             case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V':
             case 'W': case 'X': case 'Y': case 'Z':
-                state = 1;//±êÊ¶·û»ò¹Ø¼ü×Ö
+                state = 1;//æ ‡è¯†ç¬¦æˆ–å…³é”®å­—
                 break;     
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
                 state = 2;
-                break;      //Êı×Ö
+                break;      //æ•°å­—
             case '<':
                 state = 3;
                 break;      //<,<=, <<
@@ -76,7 +77,7 @@ char* Lex_analysis()
             case '*':
                 state = 8;
                 break;               
-            case '/': //ÉèÖÃ/£¬//£¬/*
+            case '/': //è®¾ç½®/ï¼Œ//ï¼Œ/*
                 state = 9;
                 break;   
             case '\'':
@@ -90,10 +91,10 @@ char* Lex_analysis()
             case '|'://|,||
                 state = 13;
                 break;
-            case '!'://!»ò!=
+            case '!'://!æˆ–!=
                 state = 14;
                 break;
-            case '#'://´¦Àí#include,#define
+            case '#'://å¤„ç†#include,#define
                 state = 15;
                 break;
             case ';':
@@ -102,14 +103,14 @@ char* Lex_analysis()
                 state = 16;
                 break;
             case EOF:
-                state = STOP; //×Ö·û½áÎ²£¬×´Ì¬»ú×¼±¸½áÊø
+                state = STOP; //å­—ç¬¦ç»“å°¾ï¼ŒçŠ¶æ€æœºå‡†å¤‡ç»“æŸ
                 break;
             default:
-                state = ERROR;//´íÎó×´Ì¬
+                state = ERROR;//é”™è¯¯çŠ¶æ€
                 break;      
             };
             break;
-        case 1:      // ´¦Àí±êÊ¶·ûid
+        case 1:      // å¤„ç†æ ‡è¯†ç¬¦id
             cat();
             get_char();
             if (letter() || digit())
@@ -118,24 +119,24 @@ char* Lex_analysis()
             {
                 retract();
                 state = 0;
-                iskey = reserve();    // ²éÕÒ¹Ø¼ü×Ö
+                iskey = reserve();    // æŸ¥æ‰¾å…³é”®å­—
 
                 if (iskey == 1)  //
                 {
                     counter.keyword_num++;
                     printf("<%s, ->\n", token);
                 }
-                else {    // ±êÊ¶·û
+                else {    // æ ‡è¯†ç¬¦
                     table_insert();     
                     counter.id_num++;
                     printf("<id, %s>\n", token);
                 };
             };
             break;
-        case 2: //Êı×Ö
+        case 2: //æ•°å­—
             cat();
             get_char();
-            if (digit() || C == '.')
+            if (digit())
                 state = 2;
             else
             {
@@ -153,7 +154,7 @@ char* Lex_analysis()
                 }
             }
             break;
-        case 3: //ÉèÖÃ¡°<,<=,<<¡±
+        case 3: //è®¾ç½®â€œ<,<=,<<â€
             get_char();
             state = 0;
             if (C == '=')
@@ -167,7 +168,7 @@ char* Lex_analysis()
             }
             counter.operator_num++;
             break;
-        case 4: //ÉèÖÃ¡°>, >=, >>¡±
+        case 4: //è®¾ç½®â€œ>, >=, >>â€
             get_char();
             state = 0;
             if (C == '=')
@@ -181,7 +182,7 @@ char* Lex_analysis()
             }
             counter.operator_num++;
             break;
-        case 5: //ÉèÖÃ¡°==¡±
+        case 5: //è®¾ç½®â€œ==â€
             get_char();
             state = 0;
             if (C == '=')
@@ -193,7 +194,7 @@ char* Lex_analysis()
             }
             counter.operator_num++;
             break;
-        case 6: //ÉèÖÃ¡°+£¬++¡±
+        case 6: //è®¾ç½®â€œ+ï¼Œ++â€
             get_char();
             state = 0;
             if (C == '+')
@@ -205,7 +206,7 @@ char* Lex_analysis()
             }
             counter.operator_num++;
             break;
-        case 7: //ÉèÖÃ¡°-£¬--¡±
+        case 7: //è®¾ç½®â€œ-ï¼Œ--â€
             get_char();
             if (C == '-')
                 printf("<--, ->\n");
@@ -217,12 +218,12 @@ char* Lex_analysis()
             counter.operator_num++;
             state = 0;
             break;
-        case 8: //ÉèÖÃ"*"
+        case 8: //è®¾ç½®"*"
             printf("<*, ->\n");
             counter.operator_num++;
             state = 0;
             break;
-        case 9: //´¦Àí/ºÍ×¢ÊÍ/**/£¬ //
+        case 9: //å¤„ç†/å’Œæ³¨é‡Š/**/ï¼Œ //
             get_char();
             if (C == '/')//
             {
@@ -231,13 +232,10 @@ char* Lex_analysis()
                 {
                     get_char();
                 }
-                retract();
             }
             else if (C == '*') ///*...*/'
             {
                 get_char();
-                if (C == '\n')
-                    counter.lines++;
                 while (state != 0)
                 {
                     if (C == '*')
@@ -246,13 +244,11 @@ char* Lex_analysis()
                         if (C == '/')
                         {
                             state = 0;
-                            //break;
+                            break;
                         }
                         retract();
                     }
                     get_char();
-                    if (C == '\n')
-                        counter.lines++;
                 }
             }
             else
@@ -262,7 +258,7 @@ char* Lex_analysis()
             }
             state = 0;
             break;
-        case 10://ÉèÖÃ'×Ö·û×´Ì¬
+        case 10://è®¾ç½®'å­—ç¬¦çŠ¶æ€
             get_char();
             while (C != '\'')
             {
@@ -272,18 +268,17 @@ char* Lex_analysis()
             printf("<const char, '%s'>\n", token);
             state = 0;
             break;
-        case 11://ÉèÖÃ¡°×Ö·û´®×´Ì¬
+        case 11://è®¾ç½®â€œå­—ç¬¦ä¸²çŠ¶æ€
             get_char();
             while (C != '\"')
             {
                 cat();
                 get_char();
             }
-            retract();
             printf("<const char[], \"%s\">\n", token);
             state = 0;
             break;
-        case 12: //ÉèÖÃ &,&&;
+        case 12: //è®¾ç½® &,&&;
             get_char();
             if (C == '&')
                 printf("<&&, ->\n");
@@ -295,7 +290,7 @@ char* Lex_analysis()
             counter.operator_num++;
             state = 0;
             break;
-        case 13: //ÉèÖÃ|,||
+        case 13: //è®¾ç½®|,||
             get_char();
             if (C == '|')
                 printf("<||, ->\n");
@@ -307,7 +302,7 @@ char* Lex_analysis()
             counter.operator_num++;
             state = 0;
             break;
-        case 14: //ÉèÖÃ!, !=
+        case 14: //è®¾ç½®!, !=
             get_char();
             if (C == '=')
                 printf("<!=, ->\n");
@@ -348,18 +343,14 @@ char* Lex_analysis()
                 }
                 retract();
                 if (!strcmp(s[1], token))
-                    printf("<#id, %s>\n", s[1]);
+                    printf("<id, %s>\n", s[1]);
                 else state = ERROR;
             }
-            else
-            {
-                retract();
-                state == ERROR;
-            }
+            else state == ERROR;
 
             state = 0;
             break;
-        case 16: //¸÷ÖÖÆäÓàµ¥¸ö·ûºÅ
+        case 16: //å„ç§å…¶ä½™å•ä¸ªç¬¦å·
             printf("<%c, ->\n", C);
             if (C == ';')
                 counter.dilimiter_num++;
@@ -379,7 +370,7 @@ char* Lex_analysis()
 
 void ReadtoBuffer(const char* filename, char* destination, int length)
 {
-    //°ÑÔ´´úÂë¶ÁÈë»º³åÇø
+    //æŠŠæºä»£ç è¯»å…¥ç¼“å†²åŒº
     FILE* fp = fopen(filename, "r");
     int i = 0;
     if (fp == NULL)
@@ -397,10 +388,14 @@ void ReadtoBuffer(const char* filename, char* destination, int length)
     flen = ftell(fp);
     fclose(fp);
 }
-//Ã¿µ÷ÓÃÒ»´Î£¬¸ù¾İforwardµÄÖ¸Ê¾´ÓbufferÖĞ    ¶ÁÒ»¸ö×Ö·û£¬²¢°ÑËü·ÅÈë±äÁ¿CÖĞ£¬È»ºó£¬ÒÆ¶¯forward£¬Ê¹Ö®    Ö¸ÏòÏÂÒ»¸ö×Ö·û¡£
+//æ¯è°ƒç”¨ä¸€æ¬¡ï¼Œæ ¹æ®forwardçš„æŒ‡ç¤ºä»bufferä¸­    è¯»ä¸€ä¸ªå­—ç¬¦ï¼Œå¹¶æŠŠå®ƒæ”¾å…¥å˜é‡Cä¸­ï¼Œç„¶åï¼Œç§»åŠ¨forwardï¼Œä½¿ä¹‹    æŒ‡å‘ä¸‹ä¸€ä¸ªå­—ç¬¦ã€‚
 void get_char()
 {
     C = buffer[forward++];
+    if (C == '\n')
+    {
+        counter.lines++;
+    }
     //printf("%c", C);
     if (buffer[forward] == EOF)
     {
@@ -417,13 +412,13 @@ void get_char()
     }
 
 }
-void cat() // °ÑCÖĞµÄ×Ö·ûÁ¬½áµ½tokenÉÏ
+void cat() // æŠŠCä¸­çš„å­—ç¬¦è¿ç»“åˆ°tokenä¸Š
 {
     token[tokenptr++] = C;
     token[tokenptr] = '\0';
 
 }
-bool letter()// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎª×ÖÄ¸£¬    ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse
+bool letter()// å¸ƒå°”å‡½æ•°ï¼Œåˆ¤æ–­Cä¸­çš„å­—ç¬¦æ˜¯å¦ä¸ºå­—æ¯ï¼Œ    è‹¥æ˜¯åˆ™è¿”å›trueï¼Œå¦åˆ™è¿”å›false
 {
     if (('a' <= C && C <= 'z') || ('A' <= C && C <= 'Z') || C == '_')
     {
@@ -431,14 +426,14 @@ bool letter()// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎª×ÖÄ¸£¬    ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Ø
     }
     return false;
 }
-bool digit()// ²¼¶ûº¯Êı£¬ÅĞ¶ÏCÖĞµÄ×Ö·ûÊÇ·ñÎªÊı×Ö£¬    ÈôÊÇÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse¡£
+bool digit()// å¸ƒå°”å‡½æ•°ï¼Œåˆ¤æ–­Cä¸­çš„å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—ï¼Œ    è‹¥æ˜¯åˆ™è¿”å›trueï¼Œå¦åˆ™è¿”å›falseã€‚
 {
-    if (('0' <= C && C <= '9') || C == 'E' || C == 'e')
+    if (('0' <= C && C <= '9') || C == '.' || C == 'E' || C == 'e')
         return true;
     return false;
     
 }
-void retract()// ÏòÇ°Ö¸ÕëforwardºóÍËÒ»¸ö×Ö·û
+void retract()// å‘å‰æŒ‡é’ˆforwardåé€€ä¸€ä¸ªå­—ç¬¦
 {
     if (forward == 0)//
     {
@@ -450,7 +445,7 @@ void retract()// ÏòÇ°Ö¸ÕëforwardºóÍËÒ»¸ö×Ö·û
     }
     else forward--;
 }
-int reserve()// ²éÕÒÊÇ·ñÊÇ¹Ø¼ü×Ö
+int reserve()// æŸ¥æ‰¾æ˜¯å¦æ˜¯å…³é”®å­—
 {
     
     int i = 0;
@@ -489,23 +484,24 @@ bool is_digit()
     }
     return true;
 }
-void get_nbc() //Ìø¹ı¿Õ°×·û
+void get_nbc() //è·³è¿‡ç©ºç™½ç¬¦
 {
     while (C == ' ' || C == '\n' || C == '\t')
     {
-        if (C == '\n')
-            counter.lines++;
         get_char();
     }
 }
-void Print_num()//Êä³ö¸÷ÖÖÍ³¼ÆÊıÁ¿
+void Print_num()//è¾“å‡ºå„ç§ç»Ÿè®¡æ•°é‡
 {
-    printf("ĞĞÊı:%d\n", counter.lines);
-    printf("×Ö·û×ÜÊı:%d\n", counter.char_num);
-    printf("¹Ø¼ü×Ö×ÜÊı:%d\n", counter.keyword_num);
-    printf("±êÊ¶·ûÊıÁ¿:%d\n", counter.id_num);
-    printf("Êı×Ö:%d\n", counter.digit_num);
-    printf("·Ö½ç·û:%d\n", counter.dilimiter_num);
-    printf("ÔËËã·û:%d\n", counter.operator_num);
-    printf("µ±Ç°ÎÄ¼şÖ¸Õë: %d\n");
+    char s[10] = { "é’Ÿæ¥¸æ£®\n" };
+    printf("%s\n",s);
+    
+
+    printf("è¡Œæ•°:%d\n", counter.lines);
+    printf("å­—ç¬¦æ€»æ•°:%d\n", counter.char_num);
+    printf("å…³é”®å­—æ€»æ•°:%d\n", counter.keyword_num);
+    printf("æ ‡è¯†ç¬¦æ•°é‡:%d\n", counter.id_num);
+    printf("æ•°å­—:%d\n", counter.digit_num);
+    printf("åˆ†ç•Œç¬¦:%d\n", counter.dilimiter_num);
+    printf("è¿ç®—ç¬¦:%d\n", counter.operator_num);
 }
